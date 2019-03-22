@@ -1,6 +1,6 @@
-import pandas as pd 
+import pandas as pd
 import numpy as np
-import csv 
+import csv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
@@ -34,7 +34,7 @@ for i in range(0, 10):
     #SVM's
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
-    # clf.fit(X_train, y_train) 
+    # clf.fit(X_train, y_train)
 
 
     #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
