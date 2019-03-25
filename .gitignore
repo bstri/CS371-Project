@@ -63,7 +63,7 @@ jspm_packages
 **/test/coverage
 report
 
-.vscode/*
+./src/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
