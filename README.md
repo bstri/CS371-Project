@@ -1,7 +1,5 @@
 # CS371-Project
 
-### Python
+## Python
 
-## SUXX
-
-**more than most things in life**
+`SUXX`
