@@ -1,6 +1,6 @@
 from scapy.all import *
-class netFlow:
-    conversationWith=""
+class NetFlow:
+    remoteIP=""
     protocol=""
     outgoingPackets=PacketList()
     incomingPackets=PacketList()
