@@ -1,5 +1,3 @@
 # CS371-Project
 
-## Python
-
-`SUXX`
+Python `SUXX`
