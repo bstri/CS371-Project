@@ -8,7 +8,7 @@ import os
 import urllib
 
 from networkFlow import NetFlow
-from requests import get
+# from requests import get
 import socket
 
 
@@ -17,8 +17,8 @@ s.connect(("8.8.8.8", 80))
 localIP=s.getsockname()[0]
 print("Local IP is : %s" % (s.getsockname()[0]))
 s.close()
-externalIP = get('https://api.ipify.org').text
-print("External IP is : %s" % externalIP)
+# externalIP = get('https://api.ipify.org').text
+# print("External IP is : %s" % externalIP)
 
 flows = []
 
