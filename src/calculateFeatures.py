@@ -74,7 +74,7 @@ for f in flows:
     print("~~~~Incoming~~~~")
     # f.incomingPackets.show()
     for pkt in f.incomingPackets:
-        print(pkt.summary())
+        print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
     print("~~~~Outgoing~~~~")
     for pkt in f.outgoingPackets:
-        print(pkt.summary())
+        print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
