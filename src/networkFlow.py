@@ -38,3 +38,9 @@ class NetFlow:
         self.outDataRate = outgoingTotalData / outgoingTime
         self.outPPS = len(self.outgoingPackets) / outgoingTime
         self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
+
+        incomingTime = self.incomingEnd - self.incomingStart
+        incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
+        self.inDataRate = incomingTotalData / incomingTime
+        self.inPPS = len(self.incomingPackets) / incomingTime
+        self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
