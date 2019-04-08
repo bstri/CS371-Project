@@ -3,15 +3,24 @@ from scapy.layers.inet import IP
 import pandas as pd
 import numpy as np
 import sys
+import os
 from networkFlow import NetFlow
 from helperFunctions import getProtocol
 from helperFunctions import getsrcdst
 from helperFunctions import getLocalMachineIP
+import argparse
 
+# labels 0-3 correspond to these csv files
+labelToCSV = ['webBrowsing.csv', 'videoStreaming.csv', 'videoConferencing.csv', 'fileDownloading.csv']
+
+parser = argparse.ArgumentParser()
+parser.add_argument('label', help='label to assign to this data', type=int)
+
+args = parser.parse_args()
+label = args.label
 
 localIP = getLocalMachineIP()
 flows = []
-
 
 def handlePacket(x):
     # Check if there is already an ongoing conversation with the remote host
@@ -45,17 +54,23 @@ def handlePacket(x):
 
 pkts = sniff(prn=lambda x: handlePacket(x), count=1500)
 # pkts.conversations()
-# "show" function
+
 for f in flows:
     f.generateFeatures()
     print("\nNETWORK FLOW:\n")
     print("Conversation with %s" % f.remoteIP)
     print("~~~~Incoming~~~~")
-    # f.incomingPackets.show()
     for pkt in f.incomingPackets:
         print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
     print("~~~~Outgoing~~~~")
     for pkt in f.outgoingPackets:
         print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
-with open('output.csv', 'w') as o:
-    o.write("\n".join(list(map(lambda x: x.getCommaSeparatedFeatures(), flows))))
+
+flow = sorted(flows, key = lambda f: f.totalPackets, reverse = True)[0] # only keep the flow with the highest number of packets
+
+dirPath = os.path.dirname(os.path.realpath(__file__))
+with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
+    f.write('\n' + flow.getCommaSeparatedFeatures() + ',{}'.format(label))
+
+# with open('output.csv', 'w') as o:
+    # o.write("\n".join(list(map(lambda f: f.getCommaSeparatedFeatures(), flows))))
