@@ -9,21 +9,29 @@ import urllib
 
 from networkFlow import NetFlow
 # from requests import get
-import socket
+
+
+def getsrcdst(pkt):
+    """Extract src and dst addresses"""
+    if 'IP' in pkt:
+        return pkt['IP'].src, pkt['IP'].dst
+    if 'IPv6' in pkt:
+        return pkt['IPv6'].src, pkt['IPv6'].dst
+    if 'ARP' in pkt:
+        return pkt['ARP'].psrc, pkt['ARP'].pdst
+    raise TypeError()
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
-localIP=s.getsockname()[0]
+localIP = s.getsockname()[0]
 print("Local IP is : %s" % (s.getsockname()[0]))
 s.close()
-# externalIP = get('https://api.ipify.org').text
-# print("External IP is : %s" % externalIP)
 
 flows = []
 
 
-def fields_extraction(x):
+def sort_packet(x):
     # x.show()
     # print("Packet info")
     # print("has IP layer... %s" % {x.haslayer('IP')})
@@ -38,34 +46,33 @@ def fields_extraction(x):
     existing = False
     global flows
     global localIP
-    global externalIP
+    (src, dst) = getsrcdst(x)
     for flow in flows:
-        if x.haslayer(IP):
-            if x[IP].src == flow.remoteIP:
-                flow.incomingPackets.append(x)
-                existing = True
-                break
-            elif x[IP].dst == flow.remoteIP:
-                flow.outgoingPackets.append(x)
-                existing = True
-                break
+        if src == flow.remoteIP:
+            flow.incomingPackets.append(x)
+            existing = True
+            break
+        elif dst == flow.remoteIP:
+            flow.outgoingPackets.append(x)
+            existing = True
+            break
     if not existing:
         # Create a network flow with x inside and add to list
         # TODO: decide whether to separate TCP/UDP protocols for the same host
         newFlow = NetFlow()
-        if x.haslayer(IP):
-            if x[IP].src == localIP:
-                newFlow.remoteIP = x[IP].dst
-                newFlow.outgoingPackets.append(x)
-            elif x[IP].dst == localIP:
-                newFlow.remoteIP = x[IP].src
-                newFlow.incomingPackets.append(x)
-            else:
-                x.show()
+        if src == localIP:
+            newFlow.remoteIP = dst
+            newFlow.outgoingPackets.append(x)
             flows.append(newFlow)
+        elif dst == localIP:
+            newFlow.remoteIP = src
+            newFlow.incomingPackets.append(x)
+            flows.append(newFlow)
+        else:
+            x.show()
 
 
-pkts = sniff(prn=lambda x: fields_extraction(x), count=20)
+pkts = sniff(prn=lambda x: sort_packet(x), count=20)
 # pkts.conversations()
 # "show" function
 for f in flows:
@@ -78,3 +85,4 @@ for f in flows:
     print("~~~~Outgoing~~~~")
     for pkt in f.outgoingPackets:
         print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
+
