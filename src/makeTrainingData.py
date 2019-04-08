@@ -47,6 +47,7 @@ pkts = sniff(prn=lambda x: handlePacket(x), count=20)
 # pkts.conversations()
 # "show" function
 for f in flows:
+    f.generateFeatures()
     print("\nNETWORK FLOW:\n")
     print("Conversation with %s" % f.remoteIP)
     print("~~~~Incoming~~~~")
@@ -56,4 +57,5 @@ for f in flows:
     print("~~~~Outgoing~~~~")
     for pkt in f.outgoingPackets:
         print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
-
+with open('output.csv', 'w') as o:
+    o.write("\n".join(list(map(lambda x: x.getCommaSeparatedFeatures(), flows))))

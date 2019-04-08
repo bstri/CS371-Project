@@ -60,3 +60,4 @@ class NetFlow:
 
     def getCommaSeparatedFeatures(self):
         return "{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remotePort, self.inTotalData, self.inDataRate, self.inPPS, self.inAvgPacketLength, self.outTotalData, self.outDataRate, self.outPPS, self.outAvgPacketLength, self.totalData)
+
