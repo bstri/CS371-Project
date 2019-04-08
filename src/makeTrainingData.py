@@ -3,49 +3,13 @@ from scapy.layers.inet import IP
 import pandas as pd
 import numpy as np
 import sys
-import socket
-import os
-import urllib
-
 from networkFlow import NetFlow
-# from requests import get
+from helperFunctions import getProtocol
+from helperFunctions import getsrcdst
+from helperFunctions import getLocalMachineIP
 
 
-def getsrcdst(pkt):
-    """Extract src and dst addresses"""
-    srcport = ''
-    dstport = ''
-    if 'TCP' in pkt:
-        srcport = pkt['TCP'].sport
-        dstport = pkt['TCP'].dport
-    if 'UDP' in pkt:
-        srcport = pkt['UDP'].sport
-        dstport = pkt['UDP'].dport
-
-    if 'IP' in pkt:
-        return pkt['IP'].src, srcport, pkt['IP'].dst, dstport
-    if 'IPv6' in pkt:
-        return pkt['IPv6'].src, srcport, pkt['IPv6'].dst, dstport
-    if 'ARP' in pkt:
-        return pkt['ARP'].psrc, srcport, pkt['ARP'].pdst, dstport
-    raise TypeError()
-def getProtocol(pkt):
-    if 'TCP' in pkt:
-        return 'TCP'
-    elif 'UDP' in pkt:
-        return 'UDP'
-    # elif 'ICMP' in pkt:
-    #     return 'ICMP'
-    else:
-        return 'other'
-
-
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-localIP = s.getsockname()[0]
-print("Local IP is : %s" % (s.getsockname()[0]))
-s.close()
-
+localIP = getLocalMachineIP()
 flows = []
 
 
