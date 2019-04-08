@@ -47,6 +47,7 @@ class NetFlow:
             outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
             self.outTotalData = outgoingTotalData
             self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
+            self.totalData += self.outgoingTotalData
             if len(self.outgoingPackets) >= 2:
                 outgoingTime = self.outgoingEnd - self.outgoingStart
                 self.outDataRate = outgoingTotalData / outgoingTime
@@ -55,12 +56,11 @@ class NetFlow:
             incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
             self.inTotalData = incomingTotalData
             self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
+            self.totalData += incomingTotalData
             if len(self.incomingPackets) >= 2:
                 incomingTime = self.incomingEnd - self.incomingStart
                 self.inDataRate = incomingTotalData / incomingTime
                 self.inPPS = len(self.incomingPackets) / incomingTime
-
-        self.totalData = incomingTotalData + outgoingTotalData
 
     def getCommaSeparatedFeatures(self):
         return "{},{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remotePort, self.protocol, self.inTotalData, self.inDataRate, self.inPPS, self.inAvgPacketLength, self.outTotalData, self.outDataRate, self.outPPS, self.outAvgPacketLength, self.totalData)
