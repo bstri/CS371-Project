@@ -18,9 +18,10 @@ class NetFlow:
         self.outgoingEnd = None
         
         # features go here
+        self.totalPackets = 0
+        self.totalData = 0
         self.outTotalData = 0
         self.inTotalData = 0
-        self.totalData = 0
         self.outPPS = 0
         self.inPPS = 0
         self.outAvgPacketLength = 0
@@ -64,5 +65,7 @@ class NetFlow:
                     self.inDataRate = incomingTotalData / incomingTime
                     self.inPPS = len(self.incomingPackets) / incomingTime
 
+        self.totalPackets = len(self.incomingPackets) + len(self.outgoingPackets)
+
     def getCommaSeparatedFeatures(self):
-        return "{},{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remoteIP, self.remotePort, self.protocol, self.totalData, self.inTotalData, self.outTotalData, self.inDataRate, self.outDataRate, self.inPPS, self.outPPS, self.inAvgPacketLength, self.outAvgPacketLength)
+        return "{},{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remoteIP, self.remotePort, self.protocol, self.totalPackets, self.totalData, self.inTotalData, self.outTotalData, self.inDataRate, self.outDataRate, self.inPPS, self.outPPS, self.inAvgPacketLength, self.outAvgPacketLength)
