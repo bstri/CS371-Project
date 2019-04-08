@@ -43,7 +43,7 @@ def handlePacket(x):
             x.show()
 
 
-pkts = sniff(prn=lambda x: handlePacket(x), count=200)
+pkts = sniff(prn=lambda x: handlePacket(x), count=1500)
 # pkts.conversations()
 # "show" function
 for f in flows:
