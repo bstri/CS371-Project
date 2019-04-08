@@ -9,9 +9,14 @@ class NetFlow:
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.protocol = transferLayerProtocol
+
         self.outgoingPackets = PacketList()
         self.incomingPackets = PacketList()
-
+        self.incomingStart = None
+        self.incomingEnd = None
+        self.outgoingStart = None
+        self.outgoingEnd = None
+        
         # features go here
         self.outTotalData = 0
         self.inTotalData = 0
@@ -22,10 +27,6 @@ class NetFlow:
         self.inAvgPacketLength = 0
         self.outDataRate = 0
         self.inDataRate = 0
-        self.incomingStart = None
-        self.incomingEnd = None
-        self.outgoingStart = None
-        self.outgoingEnd = None
 
     def addIncomingPacket(self, pkt):
         if not self.incomingPackets: 
@@ -42,19 +43,22 @@ class NetFlow:
         self.outgoingPackets.append(pkt)
 
     def generateFeatures(self):
-        outgoingTime = self.outgoingEnd - self.outgoingStart
-        outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
-        self.outTotalData = outgoingTotalData
-        self.outDataRate = outgoingTotalData / outgoingTime
-        self.outPPS = len(self.outgoingPackets) / outgoingTime
-        self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
-
-        incomingTime = self.incomingEnd - self.incomingStart
-        incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
-        self.inTotalData = incomingTotalData
-        self.inDataRate = incomingTotalData / incomingTime
-        self.inPPS = len(self.incomingPackets) / incomingTime
-        self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
+        if len(self.outgoingPackets) >= 1:
+            outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
+            self.outTotalData = outgoingTotalData
+            self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
+            if len(self.outgoingPackets) >= 2:
+                outgoingTime = self.outgoingEnd - self.outgoingStart
+                self.outDataRate = outgoingTotalData / outgoingTime
+                self.outPPS = len(self.outgoingPackets) / outgoingTime
+        if len(self.incomingPackets) >= 1:
+            incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
+            self.inTotalData = incomingTotalData
+            self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
+            if len(self.incomingPackets) >= 2:
+                incomingTime = self.incomingEnd - self.incomingStart
+                self.inDataRate = incomingTotalData / incomingTime
+                self.inPPS = len(self.incomingPackets) / incomingTime
 
         self.totalData = incomingTotalData + outgoingTotalData
 
