@@ -13,6 +13,9 @@ class NetFlow:
         self.incomingPackets = PacketList()
 
         # features go here
+        self.outTotalData = 0
+        self.inTotalData = 0
+        self.totalData = 0
         self.outPPS = 0
         self.inPPS = 0
         self.outAvgPacketLength = 0
@@ -41,12 +44,19 @@ class NetFlow:
     def generateFeatures(self):
         outgoingTime = self.outgoingEnd - self.outgoingStart
         outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
+        self.outTotalData = outgoingTotalData
         self.outDataRate = outgoingTotalData / outgoingTime
         self.outPPS = len(self.outgoingPackets) / outgoingTime
         self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
 
         incomingTime = self.incomingEnd - self.incomingStart
         incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
+        self.inTotalData = incomingTotalData
         self.inDataRate = incomingTotalData / incomingTime
         self.inPPS = len(self.incomingPackets) / incomingTime
         self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
+
+        self.totalData = incomingTotalData + outgoingTotalData
+
+    def getCommaSeparatedFeatures(self):
+        return "{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remotePort, self.inTotalData, self.inDataRate, self.inPPS, self.inAvgPacketLength, self.outTotalData, self.outDataRate, self.outPPS, self.outAvgPacketLength, self.totalData)
