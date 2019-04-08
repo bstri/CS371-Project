@@ -70,7 +70,7 @@ flow = sorted(flows, key = lambda f: f.totalPackets, reverse = True)[0] # only k
 
 dirPath = os.path.dirname(os.path.realpath(__file__))
 with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
-    f.write('\n' + flow.getCommaSeparatedFeatures() + ',{}'.format(label))
+    f.write(flow.getCommaSeparatedFeatures() + ',{}\n'.format(label))
 
 # with open('output.csv', 'w') as o:
     # o.write("\n".join(list(map(lambda f: f.getCommaSeparatedFeatures(), flows))))
