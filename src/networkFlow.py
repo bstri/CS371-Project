@@ -48,20 +48,21 @@ class NetFlow:
             self.outTotalData = outgoingTotalData
             self.outAvgPacketLength = outgoingTotalData / len(self.outgoingPackets)
             self.totalData += outgoingTotalData
-            if self.outgoingEnd > self.outgoingStart:
+            if len(self.outgoingPackets) >= 2:
                 outgoingTime = self.outgoingEnd - self.outgoingStart
-                self.outDataRate = outgoingTotalData / outgoingTime
-                self.outPPS = len(self.outgoingPackets) / outgoingTime
+                if outgoingTime:
+                    self.outDataRate = outgoingTotalData / outgoingTime
+                    self.outPPS = len(self.outgoingPackets) / outgoingTime
         if len(self.incomingPackets) >= 1:
             incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
             self.inTotalData = incomingTotalData
             self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
             self.totalData += incomingTotalData
-            if self.incomingEnd > self.incomingStart:
+            if len(self.incomingPackets) >= 2:
                 incomingTime = self.incomingEnd - self.incomingStart
-                self.inDataRate = incomingTotalData / incomingTime
-                self.inPPS = len(self.incomingPackets) / incomingTime
+                if incomingTime:
+                    self.inDataRate = incomingTotalData / incomingTime
+                    self.inPPS = len(self.incomingPackets) / incomingTime
 
     def getCommaSeparatedFeatures(self):
-        return "{},{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remotePort, self.protocol, self.totalData, self.inTotalData, self.outTotalData, self.inDataRate, self.outDataRate, self.inPPS, self.outPPS, self.inAvgPacketLength, self.outAvgPacketLength)
-    
+        return "{},{},{},{},{},{},{},{},{},{},{},{}".format(self.localPort, self.remoteIP, self.remotePort, self.protocol, self.totalData, self.inTotalData, self.outTotalData, self.inDataRate, self.outDataRate, self.inPPS, self.outPPS, self.inAvgPacketLength, self.outAvgPacketLength)
