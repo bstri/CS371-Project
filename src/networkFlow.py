@@ -4,11 +4,11 @@ from time import time
 
 class NetFlow:
 
-    # def __init__(self, hostPort, remoteIP, remotePort, transferLayerProtocol):
-    #     self.hostPort = hostPort
-    #     self.remoteIP=remoteIP
-    #     self.protocol=transferLayerProtocol
-    def __init__(self):
+    def __init__(self, localPort, remoteIP, remotePort, transferLayerProtocol):
+        self.localPort = localPort
+        self.remoteIP = remoteIP
+        self.remotePort = remotePort
+        self.protocol = transferLayerProtocol
         self.outgoingPackets = PacketList()
         self.incomingPackets = PacketList()
 
@@ -24,21 +24,21 @@ class NetFlow:
         self.outgoingStart = None
         self.outgoingEnd = None
 
-    def add_incoming_packet(self, pkt):
+    def addIncomingPacket(self, pkt):
         if not self.incomingPackets: 
             self.incomingStart = time()
         else:
             self.incomingEnd = time()
         self.incomingPackets.append(pkt)
 
-    def add_outgoing_packet(self, pkt):
+    def addOutgoingPacket(self, pkt):
         if not self.outgoingPackets: 
             self.outgoingStart = time()
         else:
             self.outgoingEnd = time()
         self.outgoingPackets.append(pkt)
 
-    def generate_features(self):
+    def generateFeatures(self):
         outgoingTime = self.outgoingEnd - self.outgoingStart
         outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
         self.outDataRate = outgoingTotalData / outgoingTime
