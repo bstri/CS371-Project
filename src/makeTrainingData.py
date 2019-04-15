@@ -57,20 +57,20 @@ pkts = sniff(prn=lambda x: handlePacket(x), count=1500)
 
 for f in flows:
     f.generateFeatures()
-    print("\nNETWORK FLOW:\n")
-    print("Conversation with %s" % f.remoteIP)
-    print("~~~~Incoming~~~~")
-    for pkt in f.incomingPackets:
-        print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
-    print("~~~~Outgoing~~~~")
-    for pkt in f.outgoingPackets:
-        print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
+    # print("Conversation with %s" % f.remoteIP)
+    # print("~~~~Incoming~~~~")
+    # for pkt in f.incomingPackets:
+    #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
+    # print("~~~~Outgoing~~~~")
+    # for pkt in f.outgoingPackets:
+    #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
 
-flow = sorted(flows, key = lambda f: f.totalPackets, reverse = True)[0] # only keep the flow with the highest number of packets
+flows.sort(key = lambda f: f.totalPackets, reverse = True) # sort by descending number of total packets
 
 dirPath = os.path.dirname(os.path.realpath(__file__))
 with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
-    f.write(flow.getCommaSeparatedFeatures() + ',{}\n'.format(label))
+    for flow in flows:
+        f.write(flow.getCommaSeparatedFeatures() + ',{}\n'.format(label))
 
 # with open('output.csv', 'w') as o:
     # o.write("\n".join(list(map(lambda f: f.getCommaSeparatedFeatures(), flows))))
