@@ -22,6 +22,7 @@ label = args.label
 localIP = getLocalMachineIP()
 flows = []
 
+
 def handlePacket(x):
     # Check if there is already an ongoing conversation with the remote host
     existing = False
@@ -65,7 +66,7 @@ for f in flows:
     # for pkt in f.outgoingPackets:
     #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
 
-flows.sort(key = lambda f: f.totalPackets, reverse = True) # sort by descending number of total packets
+flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
 
 dirPath = os.path.dirname(os.path.realpath(__file__))
 with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
