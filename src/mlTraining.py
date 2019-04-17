@@ -8,8 +8,15 @@ from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
 from sklearn import tree
 from sklearn_pandas import DataFrameMapper, cross_val_score
+from sklearn_pandas import DataFrameMapper
+import argparse
 
-df = pd.read_csv("data.csv", header=None)
+parser = argparse.ArgumentParser()
+parser.add_argument('csvFile', help='path to csv file containing training data')
+
+args = parser.parse_args()
+
+df = pd.read_csv(args.csvFile, header=None)
 # You might not need this next line if you do not care about losing information about flow_id etc. All you actually need to
 # feed your machine learning model are features and output label.
 blacklist = ['remoteIP']  # features not to include
@@ -28,7 +35,8 @@ columns_list = ['localPort',
                 'inPPS',
                 'outPPS',
                 'inAvgPacketLength',
-                'outAvgPacketLength']
+                'outAvgPacketLength',
+                'label']
 categorical_columns_list = ['localPort',
                             'remoteIP',
                             'remotePort',
@@ -62,7 +70,7 @@ y = df['label']
 
 acc_scores = 0
 for i in range(0, 10):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 
     # Decision Trees
     clf = tree.DecisionTreeClassifier()
@@ -86,3 +94,6 @@ for i in range(0, 10):
 
     transformedResult = cross_val_score(thing, X_test, y_test, scoring='accuracy')
 
+
+    result = clf.score(X_test, y_test)  #accuracy score
+    print(result)
