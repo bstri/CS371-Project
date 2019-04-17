@@ -8,8 +8,14 @@ from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
 from sklearn import tree
 from sklearn_pandas import DataFrameMapper
+import argparse
 
-df = pd.read_csv("data.csv", header=None)
+parser = argparse.ArgumentParser()
+parser.add_argument('csvFile', help='path to csv file containing training data')
+
+args = parser.parse_args()
+
+df = pd.read_csv(args.csvFile, header=None)
 # You might not need this next line if you do not care about losing information about flow_id etc. All you actually need to
 # feed your machine learning model are features and output label.
 columns_list = ['localPort',
@@ -27,7 +33,8 @@ columns_list = ['localPort',
                 'inPPS',
                 'outPPS',
                 'inAvgPacketLength',
-                'outAvgPacketLength']
+                'outAvgPacketLength',
+                'label']
 categorical_columns_list = ['localPort',
                             'remoteIP',
                             'remotePort',
@@ -49,14 +56,14 @@ dfm = DataFrameMapper(
     [(continuous_col, StandardScaler()) for continuous_col in continuous_columns_list] +
     [(categorical_col, LabelBinarizer()) for categorical_col in categorical_columns_list]
 )
-features = ['proto', 'feature_1', 'feature_2', 'feature_3', 'feature_4', 'feature_5']
+features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 
 X = df[features]
 y = df['label']
 
 acc_scores = 0
 for i in range(0, 10):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 
     #Decision Trees
     clf = tree.DecisionTreeClassifier()
@@ -74,3 +81,4 @@ for i in range(0, 10):
 
     #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
     result = clf.score(X_test, y_test)  #accuracy score
+    print(result)
