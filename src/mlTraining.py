@@ -6,6 +6,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, LabelBinarizer, LabelEncoder
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
+from sklearn.neural_network import MLPClassifier
 from sklearn import tree
 from sklearn_pandas import DataFrameMapper, cross_val_score
 from sklearn_pandas import DataFrameMapper
@@ -74,20 +75,18 @@ for i in range(0, 10):
 
     # Decision Trees
     clf = tree.DecisionTreeClassifier()
-    clf.fit(X_train, y_train)
 
     # DataFrameMapper test
     thing = dfm.fit_transform(X_train, y_train)
 
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
-    # clf.fit(X_train, y_train)
 
     #SVM's
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
-    # clf.fit(X_train, y_train)
 
+    clf.fit(X_train, y_train)
 
     #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
     decisionTreeResult = clf.score(X_test, y_test)  #accuracy score
@@ -96,4 +95,6 @@ for i in range(0, 10):
 
 
     result = clf.score(X_test, y_test)  #accuracy score
+    acc_scores += result
     print(result)
+print('Avg accuracy - ' + str(acc_scores/10))
