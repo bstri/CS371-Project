@@ -10,9 +10,11 @@ from sklearn.neural_network import MLPClassifier
 from sklearn import tree
 from sklearn_pandas import DataFrameMapper
 import argparse
+import pickle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('csvFile', help='path to csv file containing training data')
+parser.add_argument('-o', help='output file path for the trained machine', dest='outFile')
 
 args = parser.parse_args()
 
@@ -57,7 +59,7 @@ dfm = DataFrameMapper(
     [(continuous_col, StandardScaler()) for continuous_col in continuous_columns_list] +
     [(categorical_col, LabelBinarizer()) for categorical_col in categorical_columns_list]
 )
-features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 
 X = df[features]
 y = df['label']
@@ -76,10 +78,15 @@ for i in range(0, 10):
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
 
-    clf.fit(X_train, y_train)
-
     #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
+    clf.fit(X_train, y_train)
     result = clf.score(X_test, y_test)  #accuracy score
     acc_scores += result
     print(result)
 print('Avg accuracy - ' + str(acc_scores/10))
+
+# serialize and store trained machine
+if args.outFile:
+    with open(args.outFile, 'wb') as f:
+        clf.fit(X, y)
+        pickle.dump(clf, f)
