@@ -37,10 +37,11 @@ columns_list = ['localPort',
                 'inAvgPacketLength',
                 'outAvgPacketLength']
 
+features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'inAvgPacketLength', 'outDataRate']
 # features = ['localPort', 'remotePort']
-features = ['localPort', 'outAvgPacketLength']
+# features = ['localPort', 'outAvgPacketLength']
 
 
 from pprint import pprint
