@@ -9,8 +9,6 @@ from makeTrainingData import handlePacket
 with open('combinedModel') as fuckParameters:
     clf = pickle.load(fuckParameters)
 
-
-
 while True:
     localIP = getLocalMachineIP()
     flows = []
