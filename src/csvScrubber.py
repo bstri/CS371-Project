@@ -24,4 +24,3 @@ with open('{}/../trainingData/{}'.format(dirPath, args.outputCSV), 'w') as combi
                 for line in f:
                     if int(line.split(',')[4]) >= args.threshold:
                         combinedFile.write(line)
-
