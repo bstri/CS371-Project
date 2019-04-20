@@ -11,16 +11,16 @@ from sklearn import tree
 from sklearn_pandas import DataFrameMapper, cross_val_score
 from sklearn_pandas import DataFrameMapper
 import argparse
+import pickle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('csvFile', help='path to csv file containing training data')
+parser.add_argument('-o', help='output file path for the trained machine', dest='outFile')
 
 args = parser.parse_args()
 
 df = pd.read_csv(args.csvFile, header=None)
-# You might not need this next line if you do not care about losing information about flow_id etc. All you actually need to
-# feed your machine learning model are features and output label.
-blacklist = ['remoteIP']  # features not to include
+
 columns_list = ['localPort',
                 'remoteIP',
                 'remotePort',
@@ -38,33 +38,9 @@ columns_list = ['localPort',
                 'inAvgPacketLength',
                 'outAvgPacketLength',
                 'label']
-categorical_columns_list = ['localPort',
-                            'remoteIP',
-                            'remotePort',
-                            'protocol']
-continuous_columns_list = ['totalPackets',
-                           'incomingPackets',
-                           'outgoingPackets',
-                           'totalData',
-                           'inTotalData',
-                           'outTotalData',
-                           'inDataRate',
-                           'outDataRate',
-                           'inPPS',
-                           'outPPS',
-                           'inAvgPacketLength',
-                           'outAvgPacketLength']
 df.columns = columns_list
-features = columns_list
-for str in blacklist:
-    categorical_columns_list.remove(str)
-    continuous_columns_list.remove(str)
-    features.remove(str)
 
-dfm = DataFrameMapper(
-    [(continuous_col, StandardScaler()) for continuous_col in continuous_columns_list] +
-    [(categorical_col, LabelEncoder()) for categorical_col in categorical_columns_list]
-)
+features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 
 X = df[features]
 y = df['label']
@@ -76,26 +52,22 @@ for i in range(0, 10):
     # Decision Trees
     clf = tree.DecisionTreeClassifier()
 
-    # DataFrameMapper test
-    thing = dfm.fit_transform(X_train, y_train)
-
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
 
-    # SVM's
+    #SVM's
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
 
+    #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
     clf.fit(X_train, y_train)
-
-    # here you are supposed to calculate the evaluation measures
-    # indicated in the project proposal (accuracy, F-score etc)
-    decisionTreeResult = clf.score(X_test, y_test)  # accuracy score
-
-    transformedResult = cross_val_score(thing, X_test, y_test, scoring='accuracy')
-
     result = clf.score(X_test, y_test)  #accuracy score
-
     acc_scores += result
     print(result)
 print('Avg accuracy - ' + str(acc_scores/10))
+
+# serialize and store trained machine
+if args.outFile:
+    with open(args.outFile, 'wb') as f:
+        clf.fit(X, y)
+        pickle.dump(clf, f)
