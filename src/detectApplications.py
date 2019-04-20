@@ -37,34 +37,27 @@ columns_list = ['localPort',
                 'inAvgPacketLength',
                 'outAvgPacketLength']
 
-features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+# features = ['localPort', 'inAvgPacketLength', 'outDataRate']
+# features = ['localPort', 'remotePort']
+features = ['localPort', 'outAvgPacketLength']
 
 
-
+from pprint import pprint
 while True:
     flows = []
-    pkts = sniff(prn=lambda x: handlePacket(x, flows), count=500)
+    pkts = sniff(prn=lambda x: handlePacket(x, flows), count=1000, timeout=3)
     for f in flows:
         f.generateFeatures()
-    flows = [f for f in flows if f.totalPackets >= 100 and f.remotePort and f.localPort]
+    flows = [f for f in flows if f.totalPackets >= 60]
     if not flows:
         continue
     flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
-    # matrix = [[flow.getFeaturesList()[i] for i in [0, 2, 10, 11, 12, 13, 14, 15]] for flow in flows]
-    # matrix = [[flow.getFeaturesList()[i] for i in [10, 11, 12, 13, 14, 15]] for flow in flows]
-    # avg = [float(sum(col))/float(len(col)) for col in zip(*matrix)]
-    # # df = pd.DataFrame(columns=columns_list)
-    # df = pd.DataFrame(columns=features)
-    # df.loc[0] = avg
-    # X = df[features]
-    # # print(X)
-    # avgFlowResult = labelToActivityMap[clf.predict(X)[0]]
-    df = pd.DataFrame(columns=columns_list)
-    for i in range(len(flows)):
-        df.loc[i] = flows[i].getFeaturesList()
-    # df.loc[0] = flows[0].getFeaturesList()
-    X = df[features]
-
-    print(labelToActivityMap[i] for i in clf.predict(X))
-
+    labels = set()
+    for flow in flows:
+        # pprint(vars(flow))
+        df = pd.DataFrame(columns=columns_list) # can probably move this out of the for loop
+        df.loc[0] = flow.getFeaturesList()
+        X = df[features]
+        labels.add(labelToActivityMap[clf.predict(X)[0]])
+    print(labels)
