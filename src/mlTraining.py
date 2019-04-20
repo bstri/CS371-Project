@@ -55,19 +55,22 @@ for i in range(0, 10):
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
 
-    #SVM's
+    # SVM's
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
 
-    #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
+    # here you are supposed to calculate the evaluation
+    # measures indicated in the project proposal (accuracy, F-score etc)
     clf.fit(X_train, y_train)
-    result = clf.score(X_test, y_test)  #accuracy score
+    result = clf.score(X_test, y_test)  # accuracy score
     acc_scores += result
     print(result)
 print('Avg accuracy - ' + str(acc_scores/10))
 
+finalDecisionTree = tree.DecisionTreeClassifier()
+
 # serialize and store trained machine
 if args.outFile:
     with open(args.outFile, 'wb') as f:
-        clf.fit(X, y)
-        pickle.dump(clf, f)
+        finalDecisionTree.fit(X, y)
+        pickle.dump(finalDecisionTree, f)
