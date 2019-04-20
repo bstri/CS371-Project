@@ -82,19 +82,20 @@ for i in range(0, 10):
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
 
-    #SVM's
+    # SVM's
     # clf = SVC(gamma='auto')     #SVC USE THIS
     # clf = LinearSVC()  #Linear SVC
 
     clf.fit(X_train, y_train)
 
-    #here you are supposed to calculate the evaluation measures indicated in the project proposal (accuracy, F-score etc)
-    decisionTreeResult = clf.score(X_test, y_test)  #accuracy score
+    # here you are supposed to calculate the evaluation measures
+    # indicated in the project proposal (accuracy, F-score etc)
+    decisionTreeResult = clf.score(X_test, y_test)  # accuracy score
 
     transformedResult = cross_val_score(thing, X_test, y_test, scoring='accuracy')
 
-
     result = clf.score(X_test, y_test)  #accuracy score
+
     acc_scores += result
     print(result)
 print('Avg accuracy - ' + str(acc_scores/10))

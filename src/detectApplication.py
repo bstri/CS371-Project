@@ -1,10 +1,15 @@
+import pickle
+
 from scapy.all import *
 from sklearn import tree
 import argparse
 from helperFunctions import getLocalMachineIP
 from makeTrainingData import handlePacket
 
-clf = tree.DecisionTreeClassifier()  # Replace with reading in model from pickled object
+with open('combinedModel') as fuckParameters:
+    clf = pickle.load(fuckParameters)
+
+
 
 while True:
     localIP = getLocalMachineIP()
