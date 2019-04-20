@@ -6,20 +6,23 @@ import argparse
 from helperFunctions import getLocalMachineIP
 from makeTrainingData import handlePacket
 
-with open('combinedModel') as fuckParameters:
-    clf = pickle.load(fuckParameters)
+labelToActivityMap = ['Web Browsing', 'Video Streaming', 'Video Conferencing', 'File Downloading']
+
+parser = argparse.ArgumentParser()
+parser.add_argument('modelFile', help='file containing a serialized trained machine')
+
+args = parser.parse_args()
+
+clf = None
+with open(args.modelFile, 'rb') as model:
+    clf = pickle.load(model)
 
 while True:
-    localIP = getLocalMachineIP()
     flows = []
-    pkts = sniff(prn=lambda x: handlePacket(x), count=500)
+    pkts = sniff(prn=lambda x: handlePacket(x, flows), count=250)
+    if not flows:
+        continue
     for f in flows:
         f.generateFeatures()
     flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
-    print(clf.predict(flows[0]))
-
-
-
-
-
-
+    print(labelToActivityMap[clf.predict(flows[0])])

@@ -13,21 +13,13 @@ import argparse
 # labels 0-3 correspond to these csv files
 labelToCSV = ['webBrowsing.csv', 'videoStreaming.csv', 'videoConferencing.csv', 'fileDownloading.csv']
 
-parser = argparse.ArgumentParser()
-parser.add_argument('label', help='label to assign to this data', type=int)
-
-args = parser.parse_args()
-label = args.label
-
 localIP = getLocalMachineIP()
-flows = []
 
 
-def handlePacket(x):
+def handlePacket(x, flows):
     # Check if there is already an ongoing conversation with the remote host
     existing = False
-    global flows
-    global localIP
+    localIP = getLocalMachineIP()
     (src, srcport, dst, dstport) = getsrcdst(x)
     transportProtocol = getProtocol(x)
     for flow in flows:
@@ -50,28 +42,33 @@ def handlePacket(x):
             newFlow.addIncomingPacket(x)
             flows.append(newFlow)
         else:
-            x.show()
+            pass
+            # x.show()
 
+def __main__():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('label', help='label to assign to this data', type=int)
 
-pkts = sniff(prn=lambda x: handlePacket(x), count=1500)
-# pkts.conversations()
+    args = parser.parse_args()
+    label = args.label
 
-for f in flows:
-    f.generateFeatures()
-    # print("Conversation with %s" % f.remoteIP)
-    # print("~~~~Incoming~~~~")
-    # for pkt in f.incomingPackets:
-    #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
-    # print("~~~~Outgoing~~~~")
-    # for pkt in f.outgoingPackets:
-    #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
+    flows = []
 
-flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
+    sniff(prn=lambda x: handlePacket(x, flows), count=1500)
 
-dirPath = os.path.dirname(os.path.realpath(__file__))
-with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
-    for flow in flows:
-        f.write(flow.getCommaSeparatedFeatures() + ',{}\n'.format(label))
+    for f in flows:
+        f.generateFeatures()
+        # print("Conversation with %s" % f.remoteIP)
+        # print("~~~~Incoming~~~~")
+        # for pkt in f.incomingPackets:
+        #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
+        # print("~~~~Outgoing~~~~")
+        # for pkt in f.outgoingPackets:
+        #     print("Source: %s, Dest: %s, Summary: %s" % (pkt[IP].src, pkt[IP].dst, pkt.summary()))
 
-# with open('output.csv', 'w') as o:
-    # o.write("\n".join(list(map(lambda f: f.getCommaSeparatedFeatures(), flows))))
+    flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
+
+    dirPath = os.path.dirname(os.path.realpath(__file__))
+    with open('{}/../trainingData/{}'.format(dirPath, labelToCSV[label]), 'a') as f:
+        for flow in flows:
+            f.write(flow.getCommaSeparatedFeatures() + ',{}\n'.format(label))
