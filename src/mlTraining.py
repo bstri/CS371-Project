@@ -67,10 +67,8 @@ for i in range(0, 10):
     print(result)
 print('Avg accuracy - ' + str(acc_scores/10))
 
-finalDecisionTree = tree.DecisionTreeClassifier()
-
 # serialize and store trained machine
 if args.outFile:
     with open(args.outFile, 'wb') as f:
-        finalDecisionTree.fit(X, y)
-        pickle.dump(finalDecisionTree, f)
+        clf.fit(X, y)
+        pickle.dump(clf, f)
