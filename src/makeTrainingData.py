@@ -13,14 +13,13 @@ import argparse
 # labels 0-3 correspond to these csv files
 labelToCSV = ['webBrowsing.csv', 'videoStreaming.csv', 'videoConferencing.csv', 'fileDownloading.csv']
 
-localIP = getLocalMachineIP()
-
-
 def handlePacket(x, flows):
     # Check if there is already an ongoing conversation with the remote host
     existing = False
     localIP = getLocalMachineIP()
     (src, srcport, dst, dstport) = getsrcdst(x)
+    if not srcport or not dstport:
+        return
     transportProtocol = getProtocol(x)
     for flow in flows:
         if (src, srcport, dst, dstport, transportProtocol) == (flow.remoteIP, flow.remotePort, localIP, flow.localPort, flow.protocol):

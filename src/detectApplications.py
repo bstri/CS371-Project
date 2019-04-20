@@ -37,19 +37,27 @@ columns_list = ['localPort',
                 'inAvgPacketLength',
                 'outAvgPacketLength']
 
-features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+# features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+# features = ['localPort', 'inAvgPacketLength', 'outDataRate']
+# features = ['localPort', 'remotePort']
+features = ['localPort', 'outAvgPacketLength']
 
 
-
+from pprint import pprint
 while True:
     flows = []
-    pkts = sniff(prn=lambda x: handlePacket(x, flows), count=500)
-    if not flows:
-        continue
+    pkts = sniff(prn=lambda x: handlePacket(x, flows), count=1000, timeout=3)
     for f in flows:
         f.generateFeatures()
+    flows = [f for f in flows if f.totalPackets >= 60]
+    if not flows:
+        continue
     flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
-    df = pd.DataFrame(columns=columns_list)
-    df.loc[0] = flows[0].getFeaturesList()
-    X = df[features]
-    print(labelToActivityMap[clf.predict(X)[0]])
+    labels = set()
+    for flow in flows:
+        # pprint(vars(flow))
+        df = pd.DataFrame(columns=columns_list) # can probably move this out of the for loop
+        df.loc[0] = flow.getFeaturesList()
+        X = df[features]
+        labels.add(labelToActivityMap[clf.predict(X)[0]])
+    print(labels)
