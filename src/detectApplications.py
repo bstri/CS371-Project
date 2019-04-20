@@ -56,7 +56,7 @@ while True:
     flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
     labels = set()
     for flow in flows:
-        # pprint(vars(flow))
+        pprint(vars(flow))
         df = pd.DataFrame(columns=columns_list) # can probably move this out of the for loop
         df.loc[0] = flow.getFeaturesList()
         X = df[features]
