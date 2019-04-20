@@ -37,14 +37,14 @@ columns_list = ['localPort',
                 'outPPS',
                 'inAvgPacketLength',
                 'outAvgPacketLength',
-                'label',
-                'dataRateRatio']
+                'label']
 df.columns = columns_list
 
+features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'inAvgPacketLength', 'outDataRate']
 # features = ['localPort', 'remotePort']
-features = ['localPort', 'outAvgPacketLength']
+# features = ['localPort', 'outAvgPacketLength']
 
 X = df[features]
 y = df['label']

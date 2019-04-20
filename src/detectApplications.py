@@ -1,13 +1,12 @@
 import pickle
-# from io import StringIO
-from sklearn.externals.six import StringIO
-import pydot
+from io import StringIO
+
 from scapy.all import *
 from sklearn import tree
 import argparse
 from helperFunctions import getLocalMachineIP
 from makeTrainingData import handlePacket
-from sklearn.datasets import load_iris
+from operator import itemgetter
 import pandas as pd
 
 labelToActivityMap = ['Web Browsing', 'Video Streaming', 'Video Conferencing', 'File Downloading']
@@ -20,16 +19,6 @@ args = parser.parse_args()
 clf = None
 with open(args.modelFile, 'rb') as model:
     clf = pickle.load(model)
-
-dirname = os.path.dirname(__file__)
-# filename = os.path.join(dirname, '..', 'resources', 'graph.dot')
-filename = 'C:/Users/Nelson Penn/PycharmProjects/CS371-Project/resources/graph.png'
-
-with open(filename, 'wb') as file:
-    dotFile = StringIO()
-    tree.export_graphviz(clf, out_file=dotFile)
-    graph = pydot.graph_from_dot_data(dotFile.getvalue())
-    graph[0].write_png(filename )
 
 columns_list = ['localPort',
                 'remoteIP',
@@ -49,6 +38,7 @@ columns_list = ['localPort',
                 'outAvgPacketLength']
 
 features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+# features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
 # features = ['localPort', 'inAvgPacketLength', 'outDataRate']
 # features = ['localPort', 'remotePort']
 # features = ['localPort', 'outAvgPacketLength']
@@ -66,8 +56,8 @@ while True:
     flows.sort(key=lambda f: f.totalPackets, reverse=True)  # sort by descending number of total packets
     labels = set()
     for flow in flows:
-        pprint(vars(flow))
-        df = pd.DataFrame(columns=columns_list)  # can probably move this out of the for loop
+        # pprint(vars(flow))
+        df = pd.DataFrame(columns=columns_list) # can probably move this out of the for loop
         df.loc[0] = flow.getFeaturesList()
         X = df[features]
         labels.add(labelToActivityMap[clf.predict(X)[0]])
