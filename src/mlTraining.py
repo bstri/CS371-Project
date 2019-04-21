@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import csv
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score)
 from sklearn.preprocessing import StandardScaler, LabelBinarizer, LabelEncoder
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
@@ -50,26 +50,41 @@ X = df[features]
 y = df['label']
 
 acc_scores = 0
+prec_scores = 0
+recall_scores = 0
+f1_scores = 0
 for i in range(0, 10):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.50)
 
     # Decision Trees
-    clf = tree.DecisionTreeClassifier()
+    # clf = tree.DecisionTreeClassifier()
 
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
 
     # SVM's
-    # clf = SVC(gamma='auto')     #SVC USE THIS
-    # clf = LinearSVC()  #Linear SVC
+    clf = SVC(gamma='auto')     #SVC USE THIS
+    clf = LinearSVC()  #Linear SVC
 
     # here you are supposed to calculate the evaluation
     # measures indicated in the project proposal (accuracy, F-score etc)
     clf.fit(X_train, y_train)
-    result = clf.score(X_test, y_test)  # accuracy score
-    acc_scores += result
-    print(result)
-print('Avg accuracy - ' + str(acc_scores/10))
+    result_acc = clf.score(X_test, y_test)  # accuracy score
+    acc_scores += result_acc
+    print('Accuracy Score: ' + str(result_acc))
+    result_prec = precision_score(y_train, y_test, average='weighted')
+    prec_scores += result_prec
+    print('Precision Score: ' + str(result_prec))
+    result_recall = recall_score(y_train, y_test, average='weighted')
+    recall_scores += result_recall
+    print('Recall Score: ' + str(result_recall))
+    result_f1 = f1_score(y_train, y_test, average='weighted')
+    f1_scores += result_f1
+    print('F1 Score: ' + str(result_f1))
+print('\nAvg accuracy - ' + str(acc_scores/10))
+print('Avg precision - ' + str(prec_scores/10))
+print('Avg recall - ' + str(recall_scores/10))
+print('Avg f1 - ' + str(f1_scores/10))
 
 finalDecisionTree = tree.DecisionTreeClassifier()
 # serialize and store trained machine
