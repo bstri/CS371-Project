@@ -1,4 +1,6 @@
 import socket
+
+
 def getsrcdst(pkt):
     """Extract src and dst addresses"""
     srcport = ''
@@ -17,6 +19,8 @@ def getsrcdst(pkt):
     if 'ARP' in pkt:
         return pkt['ARP'].psrc, srcport, pkt['ARP'].pdst, dstport
     raise TypeError()
+
+
 def getProtocol(pkt):
     if 'TCP' in pkt:
         return 'TCP'
@@ -26,6 +30,8 @@ def getProtocol(pkt):
     #     return 'ICMP'
     else:
         return 'other'
+
+
 def getLocalMachineIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))

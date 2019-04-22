@@ -20,6 +20,7 @@ parser.add_argument('-o', help='output file path for the trained machine', dest=
 args = parser.parse_args()
 
 df = pd.read_csv(args.csvFile, header=None)
+pd.options.mode.chained_assignment = None  # remove annoying warnings
 
 columns_list = ['localPort',
                 'remoteIP',
@@ -56,15 +57,22 @@ f1_scores = 0
 for i in range(0, 10):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.50)
 
+    if X_train.shape[0] > X_test.shape[0]:
+        X_train.drop(X_train.index[0], axis=0, inplace=True)
+        y_train.drop(y_train.index[0], axis=0, inplace=True)
+    elif X_train.shape[0] < X_test.shape[0]:
+        X_test.drop(X_test.index[0], axis=0, inplace=True)
+        y_test.drop(y_test.index[0], axis=0, inplace=True)
+
     # Decision Trees
-    # clf = tree.DecisionTreeClassifier()
+    clf = tree.DecisionTreeClassifier()
 
     # Neural network (MultiPerceptron Classifier)
     # clf = MLPClassifier()
 
     # SVM's
-    clf = SVC(gamma='auto')     #SVC USE THIS
-    clf = LinearSVC()  #Linear SVC
+    #clf = SVC(gamma='auto')     #SVC USE THIS
+    #clf = LinearSVC()  #Linear SVC
 
     # here you are supposed to calculate the evaluation
     # measures indicated in the project proposal (accuracy, F-score etc)

@@ -22,5 +22,5 @@ with open('{}/../trainingData/{}'.format(dirPath, args.outputCSV), 'w') as combi
                 raise NotImplementedError
             elif args.threshold:
                 for line in f:
-                    if int(line.split(',')[4]) >= args.threshold:
+                    if int(line.split(',')[4]) >= args.threshold:  # only add flows with totalPackets over the threshold supplied in the command line argument.
                         combinedFile.write(line)

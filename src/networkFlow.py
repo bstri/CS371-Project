@@ -30,6 +30,7 @@ class NetFlow:
         self.inDataRate = 0
 
     def addIncomingPacket(self, pkt):
+        # add packet to list, update appropriate time variables
         if not self.incomingPackets: 
             self.incomingStart = time()
         else:
@@ -37,13 +38,15 @@ class NetFlow:
         self.incomingPackets.append(pkt)
 
     def addOutgoingPacket(self, pkt):
-        if not self.outgoingPackets: 
+        # add packet to list, update appropriate time variables
+        if not self.outgoingPackets:
             self.outgoingStart = time()
         else:
             self.outgoingEnd = time()
         self.outgoingPackets.append(pkt)
 
     def generateFeatures(self):
+        # calculate features of this flow
         self.totalData = 0
         if len(self.outgoingPackets) >= 1:
             outgoingTotalData = sum(map(lambda x: len(x), self.outgoingPackets))
@@ -55,7 +58,7 @@ class NetFlow:
                 if outgoingTime:
                     self.outDataRate = outgoingTotalData / outgoingTime
                     self.outPPS = len(self.outgoingPackets) / outgoingTime
-        if len(self.incomingPackets) >= 1:
+        if len(self.incomingPackets) >= 1:  # Avoid ~infinity data rates
             incomingTotalData = sum(map(lambda x: len(x), self.incomingPackets))
             self.inTotalData = incomingTotalData
             self.inAvgPacketLength = incomingTotalData / len(self.incomingPackets)
@@ -69,6 +72,7 @@ class NetFlow:
         self.totalPackets = len(self.incomingPackets) + len(self.outgoingPackets)
 
     def getCommaSeparatedFeatures(self):
+        # return CSV style list of features
         attributeList = [self.localPort,
                          self.remoteIP,
                          self.remotePort,
@@ -88,6 +92,7 @@ class NetFlow:
         return ",".join(map(lambda x: str(x), attributeList))
 
     def getFeaturesList(self):
+        # return python list of features
         return [self.localPort,
                 self.remoteIP,
                 self.remotePort,
