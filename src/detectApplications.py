@@ -37,11 +37,23 @@ columns_list = ['localPort',
                 'inAvgPacketLength',
                 'outAvgPacketLength']
 
-features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
-# features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
-# features = ['localPort', 'inAvgPacketLength', 'outDataRate']
-# features = ['localPort', 'remotePort']
-# features = ['localPort', 'outAvgPacketLength']
+features = []
+
+if re.match(".*combinedModel", args.modelFile):
+    print("combinedModel")
+    features = ['inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+elif re.match(".*experimentalModel", args.modelFile):
+    print("experimentalModel1")
+    features = ['localPort', 'remotePort', 'inDataRate', 'outDataRate', 'inPPS', 'outPPS', 'inAvgPacketLength', 'outAvgPacketLength']
+elif re.match(".*experimentalModel2", args.modelFile):
+    print("experimentalModel2")
+    features = ['localPort', 'inAvgPacketLength', 'outDataRate']
+elif re.match(".*experimentalModel3", args.modelFile):
+    print("experimentalModel1")
+    features = ['localPort', 'remotePort']
+elif re.match(".*experimentalModel4", args.modelFile):
+    print("experimentalModel1")
+    features = ['localPort', 'outAvgPacketLength']
 
 
 from pprint import pprint
