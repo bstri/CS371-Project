@@ -1,12 +1,14 @@
 import pickle
-from io import StringIO
+from sklearn.externals.six import StringIO
 
+import pydot
 from scapy.all import *
 from sklearn import tree
 import argparse
 from helperFunctions import getLocalMachineIP
 from makeTrainingData import handlePacket
 from operator import itemgetter
+from sklearn.datasets import load_iris
 import pandas as pd
 
 labelToActivityMap = ['Web Browsing', 'Video Streaming', 'Video Conferencing', 'File Downloading']
@@ -19,6 +21,16 @@ args = parser.parse_args()
 clf = None
 with open(args.modelFile, 'rb') as model:
     clf = pickle.load(model)
+
+dirname = os.path.dirname(__file__)
+# filename = os.path.join(dirname, '..', 'resources', 'graph.dot')
+filename = 'C:/Users/Nelson Penn/PycharmProjects/CS371-Project/resources/graph.png'
+
+with open(filename, 'wb') as file:
+    dotFile = StringIO()
+    tree.export_graphviz(clf, out_file=dotFile)
+    graph = pydot.graph_from_dot_data(dotFile.getvalue())
+    graph[0].write_png(filename)
 
 columns_list = ['localPort',
                 'remoteIP',
@@ -54,6 +66,9 @@ elif re.match(".*experimentalModel3", args.modelFile):
 elif re.match(".*experimentalModel4", args.modelFile):
     print("experimentalModel1")
     features = ['localPort', 'outAvgPacketLength']
+elif re.match(".*testModel", args.modelFile):
+    print("testModel")
+    features = ['outDataRate', 'inAvgPacketLength']
 
 
 from pprint import pprint
